@@ -6,7 +6,7 @@ import os
 # PAGE SETUP
 st.set_page_config(page_title="Vehicles Trajectory Viewer", layout="wide")
 
-st.image("PSU_Logo1.png", width=300)
+st.image("PSU_Logo1.png", width=400)
 st.title("PSU Vehicle Trajectories Viewer")
 st.markdown("CE 525: Transportation Operations")
 
