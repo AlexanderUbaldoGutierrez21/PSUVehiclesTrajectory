@@ -3,6 +3,11 @@
 This project displays traffic flow datasets using Python libraries such as Matplotlib, Pandas, and Plotly. As well, includes a file uploader functionality that enables users to upload their own datasets for testing process. 
 
 ## Usage
+Launch Streamlit App Terminal MAC
+```bash
+python3 -m streamlit run PSUVehicles_StreamlitApp.py
+```
+
 Web Application URL 
 ```bash
 https://psuvehiclestrajectory.streamlit.app
