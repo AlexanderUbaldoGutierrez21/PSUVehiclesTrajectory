@@ -1,13 +1,12 @@
-# PSUVehiclesTrajectories_StreamlitApp
-PSU CE 525 / Vehicle Trajectories Viewer
-## Academic Purposes
+# Vehicles Trajectory Viewer
 
-This application visualizes vehicle trajectories data.
-
-Built with Streamlit for interactive exploration.
+This project displays traffic flow datasets using Python libraries such as Matplotlib, Pandas, and Plotly. As well, includes a file uploader functionality that enables users to upload their own datasets for testing process. 
 
 ## Usage
-
+Web Application URL 
 ```bash
 https://psuvehiclestrajectory.streamlit.app
 ```
+
+## Academic Purposes
+This software is developed for academic purposes. It is not intended to become a direct source of traffic flows decissions or ADAS integration. Penn State University (PSU), CE 525 Transportation Operations. Fall 2025.
