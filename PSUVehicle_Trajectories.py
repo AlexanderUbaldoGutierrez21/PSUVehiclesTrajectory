@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 
 def plot_vehicle_trajectories(file_path):
     
-    # READ FILE ASSUMING TAB OR WHITESPACE DELIMETER 
-    df = pd.read_csv(file_path, delim_whitespace=True, header=None)
+    # READ FILE ASSUMING TAB OR WHITESPACE DELIMETER
+    df = pd.read_csv(file_path, sep=r'\s+', header=None)
     df.columns = ["time", "vehicle_id", "vehicle_type", "location"]
  
     # PLOT CREATION
@@ -20,7 +20,6 @@ def plot_vehicle_trajectories(file_path):
     plt.title("Time-Space Diagram (Vehicle Trajectories)")
     plt.grid(True, linestyle="--", alpha=0.6)
     plt.legend(title="Vehicle ID", bbox_to_anchor=(1.05, 1), loc="upper left")
-    plt.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
