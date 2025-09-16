@@ -5,7 +5,7 @@ This project displays traffic flow datasets using Python libraries such as Matpl
 ## Usage
 Launch Streamlit App Terminal MAC
 ```bash
-python3 -m streamlit run PSUVehicles_StreamlitApp.py
+python3 -m streamlit run PSUVehicleDMG_StreamlitApp.py
 ```
 
 Web Application URL 
