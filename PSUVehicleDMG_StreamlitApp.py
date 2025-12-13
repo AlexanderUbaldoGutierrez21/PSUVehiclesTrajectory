@@ -978,13 +978,13 @@ try:
         # DISPLAY RESULTS
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("Optimal Offset", f"{optimal_phi} S")
+            st.metric("Optimal Offset (sec)", f"{optimal_phi}")
         with col2:
             st.metric("Current Offset", "25 (sec)")
         with col3:
-            st.metric("Current Offset", "25 (sec)")
+            st.metric("Delay Saved (veh/sec)", f"{delay_saved:.1f}")
         with col4:
-            st.metric("Delay Saved", f"{delay_saved:.1f} VEH-S")
+            st.empty()
 
         # QUEUING DIAGRAM
         # GET ARRIVAL TIMES AT S2
