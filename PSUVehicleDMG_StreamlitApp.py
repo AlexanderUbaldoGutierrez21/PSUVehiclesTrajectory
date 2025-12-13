@@ -911,7 +911,6 @@ if not merged_df.empty:
         mape = np.mean(np.abs(non_zero_actual["abs_diff"] / non_zero_actual["actual"])) * 100
 # TIME-SPACE ANALYSIS AND SIGNAL OFFSET OPTIMIZATION
 try:
-    st.write("STARTING TIME-SPACE ANALYSIS")
     st.header("TIME-SPACE ANALYSIS AND SIGNAL OFFSET OPTIMIZATION")
 
     # SYSTEM PARAMETERS
@@ -921,8 +920,6 @@ try:
     GREEN_TIME = 30  # GREEN PHASE DURATION (S)
     DEMAND_PERIOD_END = full_time_max  # ANALYSIS PERIOD END TIME (S)
     EXISTING_OFFSET = 0  # BASELINE OFFSET FOR DELAY COMPARISON (S)
-
-    st.write(f"DEBUG: MAX LOCATION: {full_loc_max}, L_S1: {L_S1}, L_S2: {L_S2}, MAX TIME: {full_time_max}")
 
     # FUNCTION TO EXTRACT ARRIVAL TIMES USING LINEAR INTERPOLATION
     def extract_arrival_times(df, L_S1, L_S2, DEMAND_PERIOD_END):
