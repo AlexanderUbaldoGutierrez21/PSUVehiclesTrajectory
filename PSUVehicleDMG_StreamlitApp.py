@@ -980,9 +980,9 @@ try:
         with col1:
             st.metric("Optimal Offset", f"{optimal_phi} S")
         with col2:
-            st.metric("TOTAL EXISTING DELAY", f"{D_exist:.1f} VEH-S")
+            st.metric("Current Offset", "25 (sec)")
         with col3:
-            st.metric("TOTAL OPTIMAL DELAY", f"{D_opt:.1f} VEH-S")
+            st.metric("Current Offset", "25 (sec)")
         with col4:
             st.metric("Delay Saved", f"{delay_saved:.1f} VEH-S")
 
@@ -1008,13 +1008,17 @@ try:
             queue_lengths.append(queue)
 
         # PLOT QUEUING DIAGRAM
+        st.header("Queuing Diagram")
         queue_df = pd.DataFrame({"time": time_points, "queue_length": queue_lengths})
         fig_queue = px.line(
             queue_df,
-            title="💻 Queuing Diagram Two System Combined",
             x="time",
             y="queue_length",
+            title="💻 Queuing Diagram",
             labels={"time": "t (seconds)", "queue_length": "N (veh)"}
+        )
+        fig_queue.update_layout(
+            hovermode="x unified"
         )
         st.plotly_chart(fig_queue, use_container_width=True)
     else:
