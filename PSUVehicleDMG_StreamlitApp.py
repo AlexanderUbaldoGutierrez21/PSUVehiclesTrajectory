@@ -851,7 +851,7 @@ if not cum_detector_1_df.empty and not cum_detector_2_df.empty and not cum_detec
 
 # 3-DETECTOR ESTIMATION AND COMPARISON SECTION
 if not estimated_cum_detector_2_df.empty and not cum_detector_2_df.empty:
-    st.header("3-Detector Estimation vs Actual at Detector 2")
+    st.header("3-Detector Estimation vs Actual (Detector 2)")
 
 # COMPUTE COMPARISON METRICS
 merged_df = pd.merge(
@@ -902,24 +902,22 @@ if not merged_df.empty:
 
     st.plotly_chart(fig_comp, use_container_width=True)
 
-    # ANALYSIS SECTION
-    st.subheader("Estimation Analysis")
+# QUEUING ANALYSIS AND SIGNAL OPTIMIZATION
 
     # CALCULATE PERCENTAGE ACCURACY
     non_zero_actual = merged_df[merged_df["actual"] > 0]
     if not non_zero_actual.empty:
         mape = np.mean(np.abs(non_zero_actual["abs_diff"] / non_zero_actual["actual"])) * 100
-# TIME-SPACE ANALYSIS AND SIGNAL OFFSET OPTIMIZATION
 try:
-    st.header("TIME-SPACE ANALYSIS AND SIGNAL OFFSET OPTIMIZATION")
+    st.header("SIGNAL OPTIMIZATION")
 
     # SYSTEM PARAMETERS
-    L_S1 = full_loc_max * 0.4  # SIGNAL 1 POSITION (FT) - 40% OF MAX LOCATION
-    L_S2 = full_loc_max * 0.8  # SIGNAL 2 POSITION (FT) - 80% OF MAX LOCATION
-    CYCLE = 60  # SIGNAL CYCLE LENGTH (S)
-    GREEN_TIME = 30  # GREEN PHASE DURATION (S)
-    DEMAND_PERIOD_END = full_time_max  # ANALYSIS PERIOD END TIME (S)
-    EXISTING_OFFSET = 0  # BASELINE OFFSET FOR DELAY COMPARISON (S)
+    L_S1 = full_loc_max * 0.4  
+    L_S2 = full_loc_max * 0.8  
+    CYCLE = 60  
+    GREEN_TIME = 30  
+    DEMAND_PERIOD_END = full_time_max  
+    EXISTING_OFFSET = 0  
 
     # FUNCTION TO EXTRACT ARRIVAL TIMES USING LINEAR INTERPOLATION
     def extract_arrival_times(df, L_S1, L_S2, DEMAND_PERIOD_END):
@@ -1003,16 +1001,15 @@ try:
         delay_saved = D_exist - D_opt
 
         # DISPLAY RESULTS
-        st.subheader("OPTIMIZATION RESULTS")
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("OPTIMAL OFFSET (φ_OPT)", f"{optimal_phi} S")
+            st.metric("Optimal Offset", f"{optimal_phi} S")
         with col2:
             st.metric("TOTAL EXISTING DELAY", f"{D_exist:.1f} VEH-S")
         with col3:
             st.metric("TOTAL OPTIMAL DELAY", f"{D_opt:.1f} VEH-S")
         with col4:
-            st.metric("DELAY SAVED", f"{delay_saved:.1f} VEH-S")
+            st.metric("Delay Saved", f"{delay_saved:.1f} VEH-S")
 
         # QUEUING DIAGRAM
         # GET ARRIVAL TIMES AT S2
@@ -1049,9 +1046,6 @@ try:
         st.write("NO QUALIFYING VEHICLES FOUND.")
 except Exception as e:
     st.error(f"ERROR IN TIME-SPACE ANALYSIS: {str(e)}")
-
-    # ANALYSIS SECTION
-    st.subheader("Estimation Analysis")
 
     # CALCULATE PERCENTAGE ACCURACY
     non_zero_actual = merged_df[merged_df["actual"] > 0]
