@@ -355,10 +355,6 @@ def compute_cumulative_curves(df_segment, loc_min, loc_max, time_min, time_max, 
 
 # FUNCTION TO COMPUTE CUMULATIVE VEHICLES PASSED A SPECIFIC LOCATION
 def compute_cumulative_at_location(df_full, location, time_min, time_max):
-    """
-    COMPUTE CUMULATIVE VEHICLES THAT HAVE PASSED A SPECIFIC LOCATION BY TIME T,
-    ONLY TRACKING PASSAGES THAT OCCUR WITHIN THE [TIME_MIN, TIME_MAX] WINDOW.
-    """
     if df_full.empty:
         return pd.DataFrame()
 
@@ -392,12 +388,6 @@ def compute_cumulative_at_location(df_full, location, time_min, time_max):
 
 # FUNCTION TO COMPUTE TRIANGULAR FUNDAMENTAL DIAGRAM
 def triangular_fundamental_diagram(u_f, w_b, k_j):
-    """
-    Create triangular fundamental diagram data.
-    u_f: free flow speed (mph)
-    w_b: backward wave speed (mph)
-    k_j: jam density (veh/mi)
-    """
     # Critical density k_c = u_f / (u_f + w_b) * k_j
     k_c = (u_f / (u_f + w_b)) * k_j
     # Capacity q_c = u_f * k_c
@@ -419,10 +409,6 @@ def triangular_fundamental_diagram(u_f, w_b, k_j):
 
 # FUNCTION FOR 3-DETECTOR ESTIMATION
 def estimate_cumulative_3_detector(cum_1_df, cum_3_df, loc_1, loc_3, loc_2, u_f, w_b, k_j, time_min, time_max):
-    """
-    ESTIMATE CUMULATIVE AT LOCATION 2 USING 3-DETECTOR METHODOLOGY WITH TRIANGULAR FD.
-    THIS CORRECTED VERSION IMPLEMENTS THE MIN OPERATOR AND THE DELTA N SHIFT ROBUSTLY.
-    """
     if cum_1_df.empty or cum_3_df.empty:
         return pd.DataFrame()
 
@@ -439,13 +425,10 @@ def estimate_cumulative_3_detector(cum_1_df, cum_3_df, loc_1, loc_3, loc_2, u_f,
     tau_D = round((loc_3 - loc_2) / w_b_fps)
 
     # 3. VERTICAL SHIFT (DELTA N) - STORAGE CAPACITY BETWEEN M AND D
-    # DISTANCE IN MILES: (LOC_3 - LOC_2) / 5280
     Delta_N = k_j_veh_per_mi * (loc_3 - loc_2) / 5280.0
-    # EXPECTED VALUE: 314 * 150 / 5280 ≈ 8.92 VEH
 
-    # -----------------------------------------------------------------
+
     # CRITICAL FIX: ROBUST STEP FUNCTION LOOKUP (HELPER FUNCTION)
-    # -----------------------------------------------------------------
     def get_cumulative_count_robust(cum_df, t_lookup, time_min, time_max):
         """
         RETRIEVES CUMULATIVE COUNT N(T_LOOKUP) FOR ANY TIME T_LOOKUP (FLOAT).
@@ -456,7 +439,6 @@ def estimate_cumulative_3_detector(cum_1_df, cum_3_df, loc_1, loc_3, loc_2, u_f,
             return 0
 
         # ROUND THE LOOKUP TIME DOWN TO THE LARGEST AVAILABLE INTEGER TIME
-        # THIS HANDLES CASES LIKE T=4.999 OR T=5.001 CORRECTLY
         lookup_time = int(np.floor(t_lookup))
 
         # FILTER FOR TIMES LESS THAN OR EQUAL TO THE LOOKUP TIME
@@ -466,8 +448,6 @@ def estimate_cumulative_3_detector(cum_1_df, cum_3_df, loc_1, loc_3, loc_2, u_f,
             return 0
 
         # THE MAX VALUE IN THE FILTERED GROUP IS THE CUMULATIVE COUNT N(T)
-        # WE MUST USE THE LAST RECORDED VALUE IF MULTIPLE STEPS OCCUR AT THE SAME FLOOR TIME.
-        # SINCE CUM_DF IS GENERATED AT 1-SECOND INTERVALS, MAX IS THE SAFE APPROACH.
         return lookup_df["cumulative"].max()
 
     estimated_cum = []
@@ -489,7 +469,6 @@ def estimate_cumulative_3_detector(cum_1_df, cum_3_df, loc_1, loc_3, loc_2, u_f,
         N_D_pred = max(0, N_D_pred_raw - Delta_N)
 
         # 3. UNIFIED PREDICTION (POINTWISE MINIMUM)
-        # N_PRED_T = MIN(UPSTREAM PREDICTION, DOWNSTREAM PREDICTION)
         N_pred_t = min(N_U_pred, N_D_pred)
 
         # THE FINAL RESULT MUST BE AN INTEGER (VEHICLE COUNT)
@@ -498,9 +477,6 @@ def estimate_cumulative_3_detector(cum_1_df, cum_3_df, loc_1, loc_3, loc_2, u_f,
     return pd.DataFrame(estimated_cum)
 
 def estimate_flow_at_time(cum_df, t, time_min, time_max, dt=1.0):
-    """
-    Estimate instantaneous flow rate at time t using finite differences on cumulative curve.
-    """
     if cum_df.empty:
         return 0.0
 
@@ -1035,9 +1011,10 @@ try:
         queue_df = pd.DataFrame({"time": time_points, "queue_length": queue_lengths})
         fig_queue = px.line(
             queue_df,
+            title="💻 Queuing Diagram Two System Combined",
             x="time",
             y="queue_length",
-            labels={"time": "TIME (S)", "queue_length": "QUEUE LENGTH (VEH)"}
+            labels={"time": "t (seconds)", "queue_length": "N (veh)"}
         )
         st.plotly_chart(fig_queue, use_container_width=True)
     else:
