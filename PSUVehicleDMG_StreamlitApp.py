@@ -909,7 +909,7 @@ if not merged_df.empty:
     if not non_zero_actual.empty:
         mape = np.mean(np.abs(non_zero_actual["abs_diff"] / non_zero_actual["actual"])) * 100
 try:
-    st.header("SIGNAL OPTIMIZATION")
+    st.header("Signal Optimization")
 
     # SYSTEM PARAMETERS
     L_S1 = full_loc_max * 0.4  
@@ -982,7 +982,6 @@ try:
 
     # EXTRACT ARRIVAL TIMES
     arrival_times = extract_arrival_times(df, L_S1, L_S2, DEMAND_PERIOD_END)
-    st.write(f"DEBUG: NUMBER OF QUALIFYING VEHICLES: {len(arrival_times)}")
 
     if arrival_times:
         # CALCULATE EXISTING DELAY
@@ -1038,7 +1037,6 @@ try:
             queue_df,
             x="time",
             y="queue_length",
-            title=f"QUEUING DIAGRAM: OPTIMAL OFFSET (φ_OPT = {optimal_phi} S)",
             labels={"time": "TIME (S)", "queue_length": "QUEUE LENGTH (VEH)"}
         )
         st.plotly_chart(fig_queue, use_container_width=True)
