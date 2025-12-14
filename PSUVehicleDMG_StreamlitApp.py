@@ -933,6 +933,7 @@ try:
                 continue
             if t_S1 > DEMAND_PERIOD_END:
                 continue
+            
             # INTERPOLATE ARRIVAL AT L_S2
             if group["location"].min() <= L_S2 <= group["location"].max():
                 before = group[group["location"] <= L_S2]
