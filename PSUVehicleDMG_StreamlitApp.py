@@ -994,13 +994,14 @@ try:
 
         st.header("Queuing Diagram")
 
-        # COMPUTE DEPARTURE TIMES
-        departures = []
+        # COMPUTE DEPARTURES WITH OPTIMAL OFFSET 7.44
+        departures_optimal = []
         for vid, times in arrival_times.items():
+            # Use OPTIMAL_OFFSET (7.44 s)
             delay_S2 = calculate_delay(times["t_S2"], OPTIMAL_OFFSET, CYCLE, GREEN_TIME)
             dep_time = times["t_S2"] + delay_S2
-            departures.append(dep_time)
-        departures = sorted(departures)
+            departures_optimal.append(dep_time)
+        departures_optimal = sorted(departures_optimal)
 
         time_points = np.arange(0, DEMAND_PERIOD_END + 1, 1)
 
@@ -1028,8 +1029,8 @@ try:
 
         D2_current_cum = [sum(1 for dep in departures_current if dep <= t) for t in time_points]
 
-        # D2_optimal_cum with departures
-        D2_optimal_cum = [sum(1 for dep in departures if dep <= t) for t in time_points]
+        # RENAME D2_optimal_cum with the correct variable
+        D2_optimal_cum = [sum(1 for dep in departures_optimal if dep <= t) for t in time_points]
 
         # CREATE PLOT DATA
         queue_df = pd.DataFrame({
