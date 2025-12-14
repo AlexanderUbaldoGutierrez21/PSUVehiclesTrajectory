@@ -896,11 +896,11 @@ try:
     GREEN_TIME = 30 # seconds
     DEMAND_PERIOD_END = 600 # seconds
 
-    # Calculate Kinematic Optimal Offset (t_ff)
+    # CALCULATE KINEMATIC OPTIMAL OFFSET (T_FF)
     U_FF_FPS = U_FF_MPH * 5280.0 / 3600.0
     FREE_FLOW_TT = DELTA_X_FT / U_FF_FPS # 7.44 seconds
 
-    # Known Offsets for Comparison
+    # KNOWN OFFSETS FOR COMPARISON
     CURRENT_OFFSET = 25.0  # seconds (Observed from first vehicle: 126.5 - 101.5)
     OPTIMAL_OFFSET = FREE_FLOW_TT
     EXISTING_OFFSET = CURRENT_OFFSET
@@ -978,7 +978,7 @@ try:
         D_current_25 = compute_total_delay(arrival_times, CURRENT_OFFSET, CYCLE, GREEN_TIME)
         D_optimal_7_44 = compute_total_delay(arrival_times, OPTIMAL_OFFSET, CYCLE, GREEN_TIME)
 
-        # Use the theoretical value for Delay Saved (796.32 veh-s) as the code's area calculation is complex.
+        # USE THE THEORETICAL VALUE FOR DELAY SAVED (796.32 VEH-S) AS THE CODE'S AREA CALCULATION IS COMPLEX.
         DELAY_SAVED_THEORETICAL = 796.32
 
         # DISPLAY RESULTS
@@ -1006,7 +1006,7 @@ try:
         # COMPUTE CUMULATIVE DEPARTURES AT S1
         cum_S1_df = compute_cumulative_at_location(df, L_S1, 0, DEMAND_PERIOD_END)
 
-        # COMPUTE A2(t) = D1(t - t_ff)
+        # COMPUTE A2(T) = D1(T - T_FF)
         A2_cum = []
         for t in time_points:
             shifted_t = t - free_flow_tt
@@ -1027,7 +1027,7 @@ try:
 
         D2_current_cum = [sum(1 for dep in departures_current if dep <= t) for t in time_points]
 
-        # RENAME D2_optimal_cum with the correct variable
+        # RENAME D2_OPTIMAL_CUM WITH THE CORRECT VARIABLE
         D2_optimal_cum = [sum(1 for dep in departures_optimal if dep <= t) for t in time_points]
 
         # CREATE PLOT DATA
