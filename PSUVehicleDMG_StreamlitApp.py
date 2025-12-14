@@ -1046,11 +1046,11 @@ try:
             labels={"time": "t (seconds)", "value": "N (veh)", "variable": "Curves"}
         )
 
-        fig_queue.data[0].name = "Arrival Curve A2(t)"
+        fig_queue.data[0].name = "Arrival Curve"
         fig_queue.data[0].line.color = "#0D1B2A"
-        fig_queue.data[1].name = "Departure Curve D2_current(t)"
+        fig_queue.data[1].name = "Departure Curve (Current)"
         fig_queue.data[1].line.color = "#2A6F97"
-        fig_queue.data[2].name = "Departure Curve D2_optimal(t)"
+        fig_queue.data[2].name = "Departure Curve (Optimal)"
         fig_queue.data[2].line.color = "#7AD0D9"
 
         fig_queue.update_layout(
