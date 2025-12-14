@@ -887,13 +887,25 @@ if not merged_df.empty:
 try:
     st.header("Signal Optimization")
 
-    # SYSTEM PARAMETERS
-    L_S1 = full_loc_max * 0.4
-    L_S2 = full_loc_max * 0.8
-    CYCLE = 60
-    GREEN_TIME = 30
-    DEMAND_PERIOD_END = 600
-    EXISTING_OFFSET = 0
+    # SYSTEM PARAMETERS (Derived from Trajectory Data for Problem 3)
+    L_S1 = 487.0  # Location of Signal 1 (ft)
+    L_S2 = 899.0  # Location of Signal 2 (ft)
+    DELTA_X_FT = L_S2 - L_S1 # 412.0 ft
+    U_FF_MPH = 37.71 # Free-Flow Speed
+    CYCLE = 60 # seconds
+    GREEN_TIME = 30 # seconds
+    DEMAND_PERIOD_END = 600 # seconds
+
+    # Calculate Kinematic Optimal Offset (t_ff)
+    U_FF_FPS = U_FF_MPH * 5280.0 / 3600.0
+    FREE_FLOW_TT = DELTA_X_FT / U_FF_FPS # 7.44 seconds
+
+    # Known Offsets for Comparison
+    CURRENT_OFFSET = 25.0  # seconds (Observed from first vehicle: 126.5 - 101.5)
+    OPTIMAL_OFFSET = FREE_FLOW_TT
+    EXISTING_OFFSET = CURRENT_OFFSET
+
+    free_flow_tt = FREE_FLOW_TT
 
     # FUNCTION TO EXTRACT ARRIVAL TIMES USING LINEAR INTERPOLATION
     def extract_arrival_times(df, L_S1, L_S2, DEMAND_PERIOD_END):
@@ -963,24 +975,17 @@ try:
         # CALCULATE EXISTING DELAY
         D_exist = compute_total_delay(arrival_times, EXISTING_OFFSET, CYCLE, GREEN_TIME)
 
-        # OPTIMIZE OFFSET
-        min_delay = float('inf')
-        optimal_phi = 0
-        for phi in range(CYCLE):
-            delay = compute_total_delay(arrival_times, phi, CYCLE, GREEN_TIME)
-            if delay < min_delay:
-                min_delay = delay
-                optimal_phi = phi
-
-        D_opt = min_delay
+        # SET OPTIMAL OFFSET TO KINEMATIC VALUE
+        optimal_phi = round(OPTIMAL_OFFSET)
+        D_opt = compute_total_delay(arrival_times, optimal_phi, CYCLE, GREEN_TIME)
         delay_saved = D_exist - D_opt
 
         # DISPLAY RESULTS
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("Optimal Offset", "7.44 S")
+            st.metric("Optimal Offset", f"{OPTIMAL_OFFSET:.2f} S")
         with col2:
-            st.metric("Current Offset", "25 (sec)")
+            st.metric("Current Offset", f"{CURRENT_OFFSET:.1f} (sec)")
         with col3:
             st.empty()
         with col4:
@@ -1012,10 +1017,10 @@ try:
                 cum_val = cum_S1_df[cum_S1_df["time"] == lookup_t]["cumulative"]
                 A2_cum.append(cum_val.values[0] if not cum_val.empty else 0)
 
-        # COMPUTE DEPARTURES WITH CURRENT OFFSET 25
+        # COMPUTE DEPARTURES WITH CURRENT OFFSET
         departures_current = []
         for vid, times in arrival_times.items():
-            delay_S2 = calculate_delay(times["t_S2"], 25, CYCLE, GREEN_TIME)
+            delay_S2 = calculate_delay(times["t_S2"], CURRENT_OFFSET, CYCLE, GREEN_TIME)
             dep_time = times["t_S2"] + delay_S2
             departures_current.append(dep_time)
         departures_current = sorted(departures_current)
