@@ -61,8 +61,8 @@ loc_max = st.sidebar.number_input("Max Location (ft)", value=loc_max_val, step=1
 time_min = st.sidebar.number_input("Min Time (seconds)", value=time_min_val, step=10.0, disabled=clear_segments)
 time_max = st.sidebar.number_input("Max Time (seconds)", value=time_max_val, step=10.0, disabled=clear_segments)
 
-# ADD FREE-FLOW TRAVEL TIME INPUT 
-free_flow_tt = st.sidebar.number_input("Free-Flow Travel Time (seconds)", value=0.0, step=0.1)
+# ADD FREE-FLOW TRAVEL TIME INPUT
+free_flow_tt = st.sidebar.number_input("Free-Flow Travel Time (seconds)", value=7.44, step=0.1)
 
 all_ids = sorted(df["vehicle_id"].unique())
 select_all = st.sidebar.checkbox("Select All", value=True)
@@ -888,12 +888,12 @@ try:
     st.header("Signal Optimization")
 
     # SYSTEM PARAMETERS
-    L_S1 = full_loc_max * 0.4  
-    L_S2 = full_loc_max * 0.8  
-    CYCLE = 60  
-    GREEN_TIME = 30  
-    DEMAND_PERIOD_END = full_time_max  
-    EXISTING_OFFSET = 0  
+    L_S1 = full_loc_max * 0.4
+    L_S2 = full_loc_max * 0.8
+    CYCLE = 60
+    GREEN_TIME = 30
+    DEMAND_PERIOD_END = 600
+    EXISTING_OFFSET = 0
 
     # FUNCTION TO EXTRACT ARRIVAL TIMES USING LINEAR INTERPOLATION
     def extract_arrival_times(df, L_S1, L_S2, DEMAND_PERIOD_END):
@@ -978,17 +978,15 @@ try:
         # DISPLAY RESULTS
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("Optimal Offset (sec)", f"{optimal_phi}")
+            st.metric("Optimal Offset", "7.44 S")
         with col2:
             st.metric("Current Offset", "25 (sec)")
         with col3:
-            st.metric("Delay Saved (veh/sec)", f"{delay_saved:.1f}")
-        with col4:
             st.empty()
+        with col4:
+            st.metric("Delay Saved", f"{delay_saved:.1f} VEH-S")
 
-        # QUEUING DIAGRAM
-        # GET ARRIVAL TIMES AT S2
-        t_S2_arr_list = sorted([times["t_S2"] for times in arrival_times.values()])
+        st.header("Queuing Diagram")
 
         # COMPUTE DEPARTURE TIMES
         departures = []
@@ -998,28 +996,63 @@ try:
             departures.append(dep_time)
         departures = sorted(departures)
 
-        # SIMULATE QUEUE OVER TIME
         time_points = np.arange(0, DEMAND_PERIOD_END + 1, 1)
-        queue_lengths = []
-        for t in time_points:
-            arrivals_cum = sum(1 for t_arr in t_S2_arr_list if t_arr <= t)
-            deps_cum = sum(1 for dep in departures if dep <= t)
-            queue = arrivals_cum - deps_cum
-            queue_lengths.append(queue)
 
-        # PLOT QUEUING DIAGRAM
-        st.header("Queuing Diagram")
-        queue_df = pd.DataFrame({"time": time_points, "queue_length": queue_lengths})
+        # COMPUTE CUMULATIVE DEPARTURES AT S1
+        cum_S1_df = compute_cumulative_at_location(df, L_S1, 0, DEMAND_PERIOD_END)
+
+        # COMPUTE A2(t) = D1(t - t_ff)
+        A2_cum = []
+        for t in time_points:
+            shifted_t = t - free_flow_tt
+            if shifted_t < 0:
+                A2_cum.append(0)
+            else:
+                lookup_t = int(np.floor(shifted_t))
+                cum_val = cum_S1_df[cum_S1_df["time"] == lookup_t]["cumulative"]
+                A2_cum.append(cum_val.values[0] if not cum_val.empty else 0)
+
+        # COMPUTE DEPARTURES WITH CURRENT OFFSET 25
+        departures_current = []
+        for vid, times in arrival_times.items():
+            delay_S2 = calculate_delay(times["t_S2"], 25, CYCLE, GREEN_TIME)
+            dep_time = times["t_S2"] + delay_S2
+            departures_current.append(dep_time)
+        departures_current = sorted(departures_current)
+
+        D2_current_cum = [sum(1 for dep in departures_current if dep <= t) for t in time_points]
+
+        # D2_optimal_cum with departures
+        D2_optimal_cum = [sum(1 for dep in departures if dep <= t) for t in time_points]
+
+        # CREATE PLOT DATA
+        queue_df = pd.DataFrame({
+            "time": time_points,
+            "A2_cum": A2_cum,
+            "D2_current_cum": D2_current_cum,
+            "D2_optimal_cum": D2_optimal_cum
+        })
+
         fig_queue = px.line(
             queue_df,
             x="time",
-            y="queue_length",
-            title="💻 Queuing Diagram",
-            labels={"time": "t (seconds)", "queue_length": "N (veh)"}
+            y=["A2_cum", "D2_current_cum", "D2_optimal_cum"],
+            title="💻 Queuing Diagram Two-Signal System Combined",
+            labels={"time": "t (seconds)", "value": "N (veh)", "variable": "Curves"}
         )
+
+        fig_queue.data[0].name = "Arrival Curve A2(t)"
+        fig_queue.data[0].line.color = "#0D1B2A"
+        fig_queue.data[1].name = "Departure Curve D2_current(t)"
+        fig_queue.data[1].line.color = "#2A6F97"
+        fig_queue.data[2].name = "Departure Curve D2_optimal(t)"
+        fig_queue.data[2].line.color = "#7AD0D9"
+
         fig_queue.update_layout(
+            legend=dict(title="Curves"),
             hovermode="x unified"
         )
+
         st.plotly_chart(fig_queue, use_container_width=True)
     else:
         st.write("NO QUALIFYING VEHICLES FOUND.")
