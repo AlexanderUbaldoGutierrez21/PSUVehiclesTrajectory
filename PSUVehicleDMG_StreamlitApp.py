@@ -887,21 +887,21 @@ if not merged_df.empty:
 try:
     st.header("Signal Optimization")
 
-    # SYSTEM PARAMETERS (Derived from Trajectory Data for Problem 3)
-    L_S1 = 487.0  # Location of Signal 1 (ft)
-    L_S2 = 899.0  # Location of Signal 2 (ft)
-    DELTA_X_FT = L_S2 - L_S1 # 412.0 ft
-    U_FF_MPH = 37.71 # Free-Flow Speed
-    CYCLE = 60 # seconds
-    GREEN_TIME = 30 # seconds
-    DEMAND_PERIOD_END = 600 # seconds
+    # SYSTEM PARAMETERS 
+    L_S1 = 487.0  
+    L_S2 = 899.0  
+    DELTA_X_FT = L_S2 - L_S1 
+    U_FF_MPH = 37.71 
+    CYCLE = 60 
+    GREEN_TIME = 30 
+    DEMAND_PERIOD_END = 600 
 
     # CALCULATE KINEMATIC OPTIMAL OFFSET (T_FF)
     U_FF_FPS = U_FF_MPH * 5280.0 / 3600.0
-    FREE_FLOW_TT = DELTA_X_FT / U_FF_FPS # 7.44 seconds
+    FREE_FLOW_TT = DELTA_X_FT / U_FF_FPS 
 
     # KNOWN OFFSETS FOR COMPARISON
-    CURRENT_OFFSET = 25.0  # seconds (Observed from first vehicle: 126.5 - 101.5)
+    CURRENT_OFFSET = 25.0  
     OPTIMAL_OFFSET = FREE_FLOW_TT
     EXISTING_OFFSET = CURRENT_OFFSET
 
