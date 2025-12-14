@@ -984,15 +984,13 @@ try:
         # DISPLAY RESULTS
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("Optimal Offset (t_ff)", f"{OPTIMAL_OFFSET:.2f} S")
+            st.metric("Current Offset (s)", f"{CURRENT_OFFSET:.1f}")
         with col2:
-            st.metric("Current Offset (Observed)", f"{CURRENT_OFFSET:.1f} S")
+            st.metric("Optimal Offset (s)", f"{OPTIMAL_OFFSET:.2f}")
         with col3:
-            st.metric("Current Total Delay (veh·s)", f"{D_current_25:.1f}")
+            st.metric("Delay Saved (veh/s)", f"{DELAY_SAVED_THEORETICAL:.2f}")
         with col4:
-            st.metric("Delay Saved (veh·s)", f"{DELAY_SAVED_THEORETICAL:.2f}")
-
-        st.header("Queuing Diagram")
+            st.empty()
 
         # COMPUTE DEPARTURES WITH OPTIMAL OFFSET 7.44
         departures_optimal = []
