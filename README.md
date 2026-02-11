@@ -3,7 +3,7 @@
 This project displays traffic flow datasets using Python libraries such as Matplotlib, Pandas, and Plotly. As well, includes a file uploader functionality that enables users to upload their own datasets for testing process. 
 
 ## Usage
-Matplotlib Terminal MAC
+Terminal MAC Run Script
 ```bash
 python3 PSUVehicle_Trajectories.py
 ```
