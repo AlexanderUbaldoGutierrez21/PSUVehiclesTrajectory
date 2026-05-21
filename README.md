@@ -18,5 +18,5 @@ Web Application URL
 https://psuvehiclestrajectory.streamlit.app
 ```
 
-## Academic Purposes
+## Research Purposes
 This software is developed for academic purposes. It is not intended to become a direct source of traffic flows decissions or ADAS integration. Penn State University (PSU), CE 525 Transportation Operations. Fall 2025.
